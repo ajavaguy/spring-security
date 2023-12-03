@@ -23,6 +23,10 @@ dependencies {
 	implementation 'com.google.guava:guava:28.1-jre'
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.1'
 
+	implementation 'io.jsonwebtoken:jjwt-api:0.10.7'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.10.7'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.10.7'
+
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

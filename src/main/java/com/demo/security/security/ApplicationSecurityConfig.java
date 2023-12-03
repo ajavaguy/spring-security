@@ -1,6 +1,8 @@
 package com.demo.security.security;
 
 import com.demo.security.auth.UserService;
+import com.demo.security.jwt.JwtTokenVerifier;
+import com.demo.security.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +13,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -40,32 +43,36 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))
+                .addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/", "/css/*", "/js/*").permitAll()
-                .antMatchers("/home").hasAnyRole(STUDENT.name(), ADMIN.name(), ADMINTRAINEE.name())
-                .antMatchers("/api/**").hasAnyRole(STUDENT.name())
+                .antMatchers( "/", "/css/*", "/js/*").permitAll()
+//                .antMatchers("/home").hasAnyRole(STUDENT.name(), ADMIN.name(), ADMINTRAINEE.name())
+                .antMatchers("/api/**").hasAnyRole(ADMIN.name())
 //                .antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
 //                .antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
 //                .antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
 //                .antMatchers(HttpMethod.GET, "/management/api/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name())
                 .anyRequest()
                 .authenticated()
-                //.and().httpBasic()
-                .and()
-                .formLogin()
-                    .loginPage("/login").permitAll()
-                    .defaultSuccessUrl("/home", true)
-                .and()
-                    .rememberMe()
-                        .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
-                        .key("thisisremembermekey")
-                .and()
-                    .logout()
-                        .logoutUrl("/logout")
-                        .clearAuthentication(true)
-                        .invalidateHttpSession(true)
-                        .deleteCookies("remember-me")
-                        .logoutSuccessUrl("/login")
+//                .formLogin()
+//                    .loginPage("/login").permitAll()
+//                    .usernameParameter("username")
+//                    .defaultSuccessUrl("/home", true)
+//                .and()
+//                    .rememberMe()
+//                        .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
+//                        .key("thisisremembermekey")
+//                .and()
+//                    .logout()
+//                        .logoutUrl("/logout")
+//                        .clearAuthentication(true)
+//                        .invalidateHttpSession(true)
+//                        .deleteCookies("remember-me")
+//                        .logoutSuccessUrl("/login")
         ;
     }
 
