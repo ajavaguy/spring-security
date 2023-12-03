@@ -1,9 +1,12 @@
 package com.demo.security.security;
 
+import com.demo.security.auth.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,10 +27,13 @@ import static com.demo.security.security.UserRole.*;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
 
     @Autowired
-    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder) {
+    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder,
+                                     UserService userService) {
         this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
     }
 
     @Override
@@ -64,30 +70,43 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    @Bean
-    protected UserDetailsService userDetailsService() {
-        UserDetails anna = User.builder()
-                .username("anna")
-                .password(passwordEncoder.encode("password"))
-                .authorities(STUDENT.getGrantedAuthority())
-                .build();
-
-        UserDetails tom = User.builder()
-                .username("tom")
-                .password(passwordEncoder.encode("password"))
-                .authorities(ADMINTRAINEE.getGrantedAuthority())
-                .build();
-
-        UserDetails linda = User.builder()
-                .username("linda")
-                .password(passwordEncoder.encode("password"))
-                .authorities(ADMIN.getGrantedAuthority())
-                .build();
-
-        return new InMemoryUserDetailsManager(
-                anna,
-                linda,
-                tom
-        );
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(daoAuthenticationProvider());
     }
+
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(userService);
+        return provider;
+    }
+
+//    @Override
+//    @Bean
+//    protected UserDetailsService userDetailsService() {
+//        UserDetails anna = User.builder()
+//                .username("anna")
+//                .password(passwordEncoder.encode("password"))
+//                .authorities(STUDENT.getGrantedAuthority())
+//                .build();
+//
+//        UserDetails tom = User.builder()
+//                .username("tom")
+//                .password(passwordEncoder.encode("password"))
+//                .authorities(ADMINTRAINEE.getGrantedAuthority())
+//                .build();
+//
+//        UserDetails linda = User.builder()
+//                .username("linda")
+//                .password(passwordEncoder.encode("password"))
+//                .authorities(ADMIN.getGrantedAuthority())
+//                .build();
+//
+//        return new InMemoryUserDetailsManager(
+//                anna,
+//                linda,
+//                tom
+//        );
+//    }
 }
