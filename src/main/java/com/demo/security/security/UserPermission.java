@@ -1,6 +1,8 @@
 package com.demo.security.security;
 
-public enum UserPermission {
+import org.springframework.security.core.GrantedAuthority;
+
+public enum UserPermission implements GrantedAuthority {
     STUDENT_READ("student:read"),
     STUDENT_WRITE("student:write"),
     COURSE_READ("course:read"),
@@ -13,6 +15,11 @@ public enum UserPermission {
     }
 
     public String getPermission() {
+        return permission;
+    }
+
+    @Override
+    public String getAuthority() {
         return permission;
     }
 }

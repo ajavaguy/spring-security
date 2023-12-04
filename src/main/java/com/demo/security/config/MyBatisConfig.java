@@ -17,7 +17,7 @@ import org.springframework.core.io.support.ResourcePatternUtils;
 import javax.sql.DataSource;
 
 @Configuration
-@MapperScan(basePackages = { "com.example.multipledatasources.datasources" })
+@MapperScan(basePackages = { "com.demo.security.datasources" })
 public class MyBatisConfig {
 
     @Bean

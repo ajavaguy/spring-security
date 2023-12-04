@@ -1,10 +1,15 @@
 package com.demo.security.auth;
 
+import com.demo.security.security.UserPermission;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -17,9 +22,21 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userDao.findBy(email)
+        User user = (User) userDao.findBy(email)
                 .orElseThrow(() -> new UsernameNotFoundException(
-                        "User with email " + email + "is not exist!"
+                        String.format("User with email %s is not exist!", email)
                 ));
+        Set<UserPermission> permissions = userDao.getPermissionsBy(user.getId());
+        return new User(
+                permissions,
+                user.getId(),
+                user.getRole(),
+                user.getPassword(),
+                user.getEmail(),
+                true,
+                true,
+                true,
+                true
+                );
     }
 }

@@ -5,15 +5,32 @@
 
     <resultMap id="user" type="com.demo.security.auth.User">
         <result property="id" column="id"></result>
-        <result property="name" column="name"></result>
+        <result property="email" column="email"></result>
+        <result property="password" column="password"></result>
+    </resultMap>
+
+    <resultMap id="permission" type="com.demo.security.security.UserPermission">
+        <result property="permission" column="name"></result>
     </resultMap>
 
     <select id="findBy" resultMap="user">
         SELECT
-            id,
+            name,
+            email,
+            password
+        FROM
+            users
+        WHERE
+            email = #{email}
+    </select>
+
+    <select id="getPermissionsBy" resultMap="permission">
+        SELECT
             name
         FROM
-            employee
+            permissions
+        WHERE
+            user_id = #{userId}
     </select>
 
 </mapper>
