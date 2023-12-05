@@ -6,6 +6,7 @@
     <resultMap id="user" type="com.demo.security.auth.User">
         <result property="id" column="id"></result>
         <result property="email" column="email"></result>
+        <result property="role" column="role"></result>
         <result property="password" column="password"></result>
     </resultMap>
 
@@ -15,7 +16,8 @@
 
     <select id="findBy" resultMap="user">
         SELECT
-            name,
+            id,
+            role,
             email,
             password
         FROM

@@ -4,7 +4,6 @@ import com.demo.security.security.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
 import java.util.Set;
 
 public class User implements UserDetails {
@@ -27,6 +26,7 @@ public class User implements UserDetails {
                 boolean isAccountNonLocked,
                 boolean isCredentialsNonExpired,
                 boolean isEnabled) {
+        super();
         this.grantedAuthorities = grantedAuthorities;
         this.id = id;
         this.role = role;
@@ -38,14 +38,15 @@ public class User implements UserDetails {
         this.isEnabled = isEnabled;
     }
 
-    public User(Integer id, String password, String email) {
+    public User(Integer id, UserRole role, String password, String email) {
         this.id = id;
+        this.role = role;
         this.password = password;
         this.email = email;
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Set<? extends GrantedAuthority> getAuthorities() {
         return grantedAuthorities;
     }
 

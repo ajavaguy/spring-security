@@ -26,9 +26,9 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(
                         String.format("User with email %s is not exist!", email)
                 ));
-        Set<UserPermission> permissions = userDao.getPermissionsBy(user.getId());
+        //Set<UserPermission> permissions = userDao.getPermissionsBy(user.getId());
         return new User(
-                permissions,
+                user.getRole().getGrantedAuthority(),
                 user.getId(),
                 user.getRole(),
                 user.getPassword(),
